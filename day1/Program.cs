@@ -10,32 +10,53 @@ namespace Aoc2021.Day1
                 .Select(o => int.Parse(o))
                 .ToArray();
 
+            var windowSize = int.Parse(args[1]);
+
             var increaseCount = 0;
 
             for (var i = 0; i < depths.Length; i++)
             {
-                var increased = i > 0 && depths[i] > depths[i - 1];
+                var thisWindow = GetWindowSum(depths, i, windowSize);
 
-                string desc;
-                if (i > 0)
+                if (thisWindow.HasValue)
                 {
-                    desc = increased ? "increased" : "decreased";
-                }
-                else
-                {
-                    desc = "N/A - no previous measurement";
-                }
+                    string desc;
 
-                Console.WriteLine($"{depths[i]} ({desc})");
+                    var previousWindow = GetWindowSum(depths, i - 1, windowSize);
+                    if (previousWindow.HasValue)
+                    {
+                        var increased = thisWindow.Value > previousWindow.Value;
 
-                if (increased)
-                {
-                    increaseCount++;
+                        if (increased)
+                        {
+                            increaseCount++;
+                        }
+
+                        desc = increased ? "increased" : "decreased";
+                    }
+                    else
+                    {
+                        desc = "N/A - no previous measurement";
+                    }
+
+                    Console.WriteLine($"{thisWindow.Value} ({desc})");
                 }
             }
 
             Console.WriteLine("");
             Console.WriteLine($"{increaseCount} increases.");
+        }
+
+        private static int? GetWindowSum(int[] values, int i, int size)
+        {
+            var skip = i - (size - 1);
+
+            if (skip < 0)
+            {
+                return null;
+            }
+
+            return values.Skip(skip).Take(size).Sum();
         }
     }
 }
