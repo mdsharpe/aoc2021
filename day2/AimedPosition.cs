@@ -1,40 +1,41 @@
 namespace Aoc2021.Day2
 {
-    internal class Position
+    internal class AimedPosition : Position
     {
-        public Position(int x, int z)
+        public AimedPosition(int x, int z, int aim)
+            : base(x, z)
         {
-            X = x;
-            Z = z;
+            Aim = aim;
         }
 
-        public int X { get; }
-        public int Z { get; }
+        public int Aim { get; }
 
-        public virtual Position Add(Command cmd) 
+        public override Position Add(Command cmd) 
         {
             var x = this.X;
             var z = this.Z;
+            var aim = this.Aim;
 
             switch (cmd.Direction) 
             {
                 case Direction.Forward:
                     x += cmd.Units;
+                    z += aim * cmd.Units;
                     break;
 
                 case Direction.Up:
-                    z -= cmd.Units;
+                    aim -= cmd.Units;
                     break;
 
                 case Direction.Down:
-                    z += cmd.Units;
+                    aim += cmd.Units;
                     break;
 
                 default:
                     throw new NotSupportedException();
             }
 
-            return new Position(x, z);
+            return new AimedPosition(x, z, aim);
         }
     }
 }
