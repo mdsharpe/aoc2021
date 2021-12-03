@@ -8,7 +8,7 @@ namespace Aoc2021.Day3
         public static void Main(string[] args)
         {
             var bitArrays = System.IO.File.ReadAllLines(args[0])
-                .Select(o => o.Select(c => c != '0').ToArray())
+                .Select(o => o.Select(c => c != '0').Reverse().ToArray())
                 .Select(o => new BitArray(o))
                 .ToArray();
             var inputLength = bitArrays.Length;
@@ -33,8 +33,8 @@ namespace Aoc2021.Day3
             var gammaRate = gammaBitArray.ToInt32();
             var epsilonRate = epsilonBitArray.ToInt32();
 
-            Console.WriteLine($"Gamma rate: {gammaRate}");
-            Console.WriteLine($"Epsilon rate: {epsilonRate}");
+            Console.WriteLine($"Gamma rate: {gammaBitArray.ToBinaryString()} = {gammaRate}");
+            Console.WriteLine($"Epsilon rate: {epsilonBitArray.ToBinaryString()} = {epsilonRate}");
             Console.WriteLine($"Power consumption: {gammaRate * epsilonRate}");
         }
     }
