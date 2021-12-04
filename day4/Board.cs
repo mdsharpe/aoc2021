@@ -40,12 +40,8 @@ namespace Aoc2021.Day4
 
         public bool GetIsWin(int[] draws)
         {
-            var rowsAndCols = Enumerable.Concat(
-                _nums,
-                EnumerateCols()
-            );
-
-            return rowsAndCols.Any(o => o.All(draws.Contains));
+            return Enumerable.Concat(_nums, EnumerateCols())
+                .Any(o => o.All(draws.Contains));
         }
 
         private IEnumerable<IEnumerable<int>> EnumerateCols()

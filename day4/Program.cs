@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Aoc2021.Day4
+﻿namespace Aoc2021.Day4
 {
     internal static class Program
     {
@@ -34,32 +32,39 @@ namespace Aoc2021.Day4
                 boards.Add(Board.Parse(boardLineBuffer));
             }
 
-            Board? winningBoard = null;
-            var draws = Array.Empty<int>();
+            var winningBoards = new Dictionary<Board, (int unmarkedSum, int lastDraw)>();
 
             for (var i = 1; i <= allDraws.Length; i++)
             {
-                draws = allDraws.Take(i).ToArray();
+                var draws = allDraws.Take(i).ToArray();
 
-                winningBoard = boards.FirstOrDefault(o => o.GetIsWin(draws));
+                var newWins = boards
+                    .Where(o => !winningBoards.ContainsKey(o))
+                    .Where(o => o.GetIsWin(draws))
+                    .ToArray();
 
-                if (winningBoard != null)
+                foreach (var newWin in newWins)
                 {
-                    break;
+                    var unmarkedSum = newWin
+                        .EnumerateAllNumbers()
+                        .Except(draws)
+                        .Sum();
+                    winningBoards.Add(newWin, (unmarkedSum, draws.Last()));
                 }
             }
 
-            if (winningBoard != null)
+            void writeBoard(Board board, int unmarkedSum, int lastDraw)
             {
-                var unmarkedSum = winningBoard
-                    .EnumerateAllNumbers()
-                    .Except(draws)
-                    .Sum();
-
-                var lastDraw = draws.Last();
-
                 Console.WriteLine($"{unmarkedSum} * {lastDraw} = {unmarkedSum * lastDraw}");
             }
+
+            var firstWin = winningBoards.First();
+            Console.WriteLine("First winning board:");
+            writeBoard(firstWin.Key, firstWin.Value.unmarkedSum, firstWin.Value.lastDraw);
+
+            var lastWin = winningBoards.Last();
+            Console.WriteLine("Last winning board:");
+            writeBoard(lastWin.Key, lastWin.Value.unmarkedSum, lastWin.Value.lastDraw);
         }
     }
 }
