@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -8,58 +9,51 @@ namespace Aoc2021.Day6
     {
         public static void Main(string[] args)
         {
-            var fishes = System.IO.File.ReadAllText(args[0])
+            var initialCounts = System.IO.File.ReadAllText(args[0])
                 .Split(',')
                 .Select(int.Parse)
-                .Select(o => new Fish(o))
-                .ToList();
+                .GroupBy(o => o)
+                .ToDictionary(o => o.Key, o => o.LongCount());
+
+            var fishes = Enumerable.Range(0, 9)
+                .Select(i => initialCounts.GetValueOrDefault(i))
+                .ToArray();
 
             var runLength = int.Parse(args[1]);
             var verbose = args.Length > 2 && args.Contains("verbose", StringComparer.OrdinalIgnoreCase);
 
             if (verbose)
             {
-                Print(fishes, 0);
+                Print(fishes);
             }
 
             for (var iteration = 1; iteration <= runLength; iteration++)
             {
-                foreach (var fish in fishes.ToArray())
+                long prev = 0;
+
+                for (var i = 8; i >= 0; i--)
                 {
-                    if (fish.Iterate())
-                    {
-                        fishes.Add(new Fish());
-                    }
+                    var tmp = fishes[i];
+                    fishes[i] = prev;
+                    prev = tmp;
                 }
+
+                fishes[6] += prev;
+                fishes[8] = prev;
 
                 if (verbose)
                 {
-                    Print(fishes, iteration);
+                    Print(fishes);
                 }
             }
 
             Console.WriteLine();
-            Console.WriteLine($"After {runLength} days there are {fishes.Count} fishes.");
+            Console.WriteLine($"After {runLength} days there are {fishes.Sum()} fish.");
         }
 
-        private static void Print(IEnumerable<Fish> fishes, int iteration)
+        private static void Print(long[] fishes)
         {
-            var output = new StringBuilder();
-
-            if (iteration < 1)
-            {
-                output.Append("Initial state:");
-            }
-            else
-            {
-                output.AppendFormat("After {0:00} days:", iteration);
-            }
-
-            output.Append('\t');
-
-            output.Append(string.Join(',', fishes.Select(o => o.Timer)));
-
-            Console.WriteLine(output.ToString());
+            Console.WriteLine(string.Join(',', fishes.Select(o => o.ToString()).Reverse()));
         }
     }
 }
