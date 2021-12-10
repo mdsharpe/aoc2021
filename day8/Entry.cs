@@ -32,16 +32,16 @@ namespace Aoc2021.Day8
         {
             switch (text.Length)
             {
-                case 3:
-                    return 7;
-
                 case 2:
                     return 1;
+
+                case 3:
+                    return 7;
 
                 case 4:
                     return 4;
 
-                case 6:
+                case 7:
                     return 8;
 
                 default:

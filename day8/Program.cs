@@ -15,10 +15,16 @@ namespace Aoc2021.Day8
                 .Where(o => o != null)
                 .ToArray();
 
+            var total = 0;
+
             for (var i = 1; i <= 8; i++)
             {
-                Console.WriteLine($"Digit {i} appears {digits.Count(o => o == i)} times.");
+                var count = digits.Count(o => o == i);
+                total += count;
+                Console.WriteLine($"Digit {i} appears {count} times.");
             }
+
+            Console.WriteLine($"Detected a total of {total} digits.");
         }
     }
 }
